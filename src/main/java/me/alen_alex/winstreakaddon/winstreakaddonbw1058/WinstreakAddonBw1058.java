@@ -25,10 +25,15 @@ public final class WinstreakAddonBw1058 extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
+        /*
+        Checking for dependency plugins, if not present, plugin will be disabled!
+        -> PlaceholderAPI
+        -> Bedwars1058
+         */
         if(!getServer().getPluginManager().isPluginEnabled("BedWars1058")){
             getLogger().severe("-----------------------------------------------");
             getLogger().info(" ");
-            getLogger().severe("Dependency plugin missing: Bedwars1058");
+            getLogger().severe("Dependency plugin missing: BedWars1058");
             getLogger().severe("Plugin will be disabled!");
             getLogger().info(" ");
             getLogger().severe("-----------------------------------------------");
@@ -46,13 +51,34 @@ public final class WinstreakAddonBw1058 extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(plugin);
             return;
         }
-
+        /*
+        Getting the API class of BedWars1058, If failed plugin will be disabled!
+         */
         bedWarsAPI = Bukkit.getServicesManager().getRegistration(BedWars.class).getProvider();
+        if(bedWarsAPI == null){
+            getLogger().severe("-----------------------------------------------");
+            getLogger().info(" ");
+            getLogger().severe("Unable to initialize the BedWars1058 plugin API");
+            getLogger().severe("Plugin will be disabled!");
+            getLogger().info(" ");
+            getLogger().severe("-----------------------------------------------");
+            getServer().getPluginManager().disablePlugin(plugin);
+            return;
+        }
+        /*
+        Intializing the plugins basic Utils and Configuration Classes
+         */
         messageUtils = new MessageUtils(this);
         fileUtils = new FileUtils(this);
         pluginConfig = new Configuration(this);
         pluginConfig.loadFile();
 
+        /*
+        Setting up the datastorage method for plugin, If mySQL is enabled in the config, it will prepare for the server connection, If failed then it will check for fallback SQLite Connection,
+        If that too failed, the plugin will be disabled since it cannot implement a storage system.
+
+        If SQLite is enabled, It will prepare for SQLite and try to prepare a connection to SQLite file, If failed, the plugin will be disabled!
+         */
         if(pluginConfig.isSql()) {
             dataStorage = new SQL(this);
             if(!dataStorage.init()){
@@ -71,12 +97,23 @@ public final class WinstreakAddonBw1058 extends JavaPlugin {
                 }
             }
         }
-        else
+        else {
             dataStorage = new SQLite(this);
+            if(!dataStorage.init()){
+                getLogger().severe("-----------------------------------------------");
+                getLogger().info(" ");
+                getLogger().severe("Unable to initialize SQLite");
+                getLogger().severe("Plugin will be disabled!");
+                getLogger().info(" ");
+                getLogger().severe("-----------------------------------------------");
+                getServer().getPluginManager().disablePlugin(plugin);
+                return;
+            }
+        }
 
         streakManager = new WinstreakManager();
         registerListeners();
-        this.getLogger().info("Winstreak addon has been properly enabled!!");
+        this.getLogger().info("Win-streak addon has been properly enabled!!");
         this.getLogger().info("https://github.com/AlenGeoAlex/WinstreakAddon_Bw1058");
     }
 
