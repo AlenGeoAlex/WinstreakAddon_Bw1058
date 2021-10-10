@@ -1,0 +1,5 @@
+name: WinstreakAddon Bw1058
+version: '1.0'
+main: me.alen_alex.winstreakaddon.winstreakaddonbw1058.WinstreakAddonBw1058
+depend: [ BedWars1058, PlaceholderAPI ]
+authors: [ Alen_Alex ]
