@@ -53,6 +53,7 @@ public class Configuration implements YamlFiles {
     @Override
     public void reloadFile() {
         init();
+        loadFile();
     }
 
     @Override

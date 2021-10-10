@@ -127,4 +127,15 @@ public class SQLite implements DataStorage {
         }
             return connection;
     }
+
+    @Override
+    public void closeConnection() {
+        try {
+            if(!connection.isClosed())
+                connection.close();
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to close connection. Check stacktrace for more info!");
+            e.printStackTrace();
+        }
+    }
 }

@@ -118,6 +118,17 @@ public class SQL implements DataStorage {
 
     }
 
+    @Override
+    public void closeConnection() {
+        try {
+            if(!connection.isClosed())
+                connection.close();
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to close connection. Check stacktrace for more info!");
+            e.printStackTrace();
+        }
+    }
+
     private Connection getConnection(){
         try {
             if(connection == null || connection.isClosed())

@@ -18,4 +18,6 @@ public interface DataStorage {
 
     void addStreak(UUID playerUUID);
 
+    void closeConnection();
+
 }

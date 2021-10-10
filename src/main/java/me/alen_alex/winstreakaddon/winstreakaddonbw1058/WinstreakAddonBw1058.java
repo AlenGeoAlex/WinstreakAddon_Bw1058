@@ -76,19 +76,27 @@ public final class WinstreakAddonBw1058 extends JavaPlugin {
 
         streakManager = new WinstreakManager();
         registerListeners();
-
+        this.getLogger().info("Winstreak addon has been properly enabled!!");
+        this.getLogger().info("https://github.com/AlenGeoAlex/WinstreakAddon_Bw1058");
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        if(dataStorage != null){
+            dataStorage.closeConnection();
+            if(dataStorage instanceof SQL)
+                getLogger().info("MySQL Storage Connection has been closed!");
+            else
+                getLogger().info("SQLite Storage Connection has been closed!");
+        }
     }
 
     public void reloadPlugin(){
-
+        pluginConfig.reloadFile();
+        this.getLogger().info("Plugin has been reloaded!");
     }
 
-    public void registerListeners(){
+    private void registerListeners(){
         this.getServer().getPluginManager().registerEvents(new PlayerJoinEvents(this), this);
     }
 
