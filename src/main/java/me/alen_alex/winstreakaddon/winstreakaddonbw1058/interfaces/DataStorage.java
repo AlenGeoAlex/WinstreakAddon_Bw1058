@@ -20,4 +20,6 @@ public interface DataStorage {
 
     void closeConnection();
 
+    void saveUserData(Winstreak obj);
+
 }

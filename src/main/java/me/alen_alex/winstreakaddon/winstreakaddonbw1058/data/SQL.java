@@ -129,6 +129,27 @@ public class SQL implements DataStorage {
         }
     }
 
+    @Override
+    public void saveUserData(Winstreak obj) {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    PreparedStatement ps = getConnection().prepareStatement("UPDATE `addonws` SET `current` = ?,`highest` = ? WHERE `uuid` = ?");
+                    ps.setInt(1,obj.getCurrentStreak());
+                    ps.setInt(2,obj.getBestStreak());
+                    ps.setString(3,obj.getPlayerUUID().toString());
+                    ps.executeUpdate();
+                    ps.close();
+                }catch (SQLException e){
+                    plugin.getLogger().info("Unable to save player data for "+obj.getPlayerUUID());
+                    e.printStackTrace();
+                    return;
+                }
+            }
+        });
+    }
+
     private Connection getConnection(){
         try {
             if(connection == null || connection.isClosed())

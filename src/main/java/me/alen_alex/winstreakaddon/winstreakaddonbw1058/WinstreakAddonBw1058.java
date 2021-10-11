@@ -6,7 +6,9 @@ import me.alen_alex.winstreakaddon.winstreakaddonbw1058.data.SQLite;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.filesystem.Configuration;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.interfaces.DataStorage;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.listener.PlayerJoinEvents;
+import me.alen_alex.winstreakaddon.winstreakaddonbw1058.listener.PlayerLeaveEvent;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.manager.WinstreakManager;
+import me.alen_alex.winstreakaddon.winstreakaddonbw1058.task.SaveDataTask;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.utils.FileUtils;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.utils.MessageUtils;
 import org.bukkit.Bukkit;
@@ -21,7 +23,8 @@ public final class WinstreakAddonBw1058 extends JavaPlugin {
     private BedWars bedWarsAPI;
     private MessageUtils messageUtils;
     private WinstreakManager streakManager;
-
+    private SaveDataTask playerSaving;
+    private boolean forcedSQLite = false;
     @Override
     public void onEnable() {
         plugin = this;
@@ -72,6 +75,7 @@ public final class WinstreakAddonBw1058 extends JavaPlugin {
         fileUtils = new FileUtils(this);
         pluginConfig = new Configuration(this);
         pluginConfig.loadFile();
+        playerSaving = new SaveDataTask(this);
 
         /*
         Setting up the datastorage method for plugin, If mySQL is enabled in the config, it will prepare for the server connection, If failed then it will check for fallback SQLite Connection,
@@ -94,7 +98,9 @@ public final class WinstreakAddonBw1058 extends JavaPlugin {
                     getLogger().severe("-----------------------------------------------");
                     getServer().getPluginManager().disablePlugin(plugin);
                     return;
-                }
+                }else
+                    forcedSQLite = true;
+
             }
         }
         else {
@@ -111,7 +117,9 @@ public final class WinstreakAddonBw1058 extends JavaPlugin {
             }
         }
 
-        streakManager = new WinstreakManager();
+        streakManager = new WinstreakManager(this);
+        if(pluginConfig.isSavePlayerData())
+            playerSaving.runTaskTimerAsynchronously(this, 20L, getPluginConfig().getSaveDuration() *20*60);
         registerListeners();
         this.getLogger().info("Win-streak addon has been properly enabled!!");
         this.getLogger().info("https://github.com/AlenGeoAlex/WinstreakAddon_Bw1058");
@@ -129,12 +137,16 @@ public final class WinstreakAddonBw1058 extends JavaPlugin {
     }
 
     public void reloadPlugin(){
+        playerSaving.cancel();
         pluginConfig.reloadFile();
+        if(pluginConfig.isSavePlayerData())
+            playerSaving.runTaskTimerAsynchronously(this, 20L, getPluginConfig().getSaveDuration() *20*60);
         this.getLogger().info("Plugin has been reloaded!");
     }
 
     private void registerListeners(){
         this.getServer().getPluginManager().registerEvents(new PlayerJoinEvents(this), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerLeaveEvent(this),this);
     }
 
 
@@ -164,5 +176,9 @@ public final class WinstreakAddonBw1058 extends JavaPlugin {
 
     public WinstreakManager getStreakManager() {
         return streakManager;
+    }
+
+    public boolean isForcedSQLite() {
+        return forcedSQLite;
     }
 }

@@ -13,8 +13,9 @@ public class Configuration implements YamlFiles {
     private String version;
     //
     private String sqlHost,sqlPort,sqlUsername,sqlPassword,sqlDatabase;
-    private boolean sql,doKickonFail;
+    private boolean sql,doKickonFail,savePlayerData;
     private String kickMessage;
+    private int saveDuration;
 
     public Configuration(WinstreakAddonBw1058 plugin) {
         this.plugin = plugin;
@@ -42,7 +43,8 @@ public class Configuration implements YamlFiles {
         }
         doKickonFail = pluginConfiguration.getBoolean("settings.kick-when-failed-to-register-a-player");
         kickMessage = plugin.getMessageUtils().parseColor(pluginConfiguration.getString("settings.kick-on-failed-message"));
-
+        savePlayerData = pluginConfiguration.getBoolean("settings.save-data.enabled");
+        saveDuration = pluginConfiguration.getInt("settings.save-data.interval-in-mins");
     }
 
     @Override
@@ -91,5 +93,13 @@ public class Configuration implements YamlFiles {
 
     public String getKickMessage() {
         return kickMessage;
+    }
+
+    public boolean isSavePlayerData() {
+        return savePlayerData;
+    }
+
+    public int getSaveDuration() {
+        return saveDuration;
     }
 }

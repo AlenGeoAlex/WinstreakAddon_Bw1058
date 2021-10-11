@@ -20,4 +20,7 @@ storage:
 
 settings:
   kick-when-failed-to-register-a-player: true
-  kick-on-failed-message: "[Winstrak] &cUnable to register/load your user on/from database!"
+  kick-on-failed-message: "[Winstreak] &cUnable to register/load your user on/from database!"
+  save-data:
+    enabled: true
+    interval-in-mins: 30

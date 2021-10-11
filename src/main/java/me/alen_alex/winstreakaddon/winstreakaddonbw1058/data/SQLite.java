@@ -138,4 +138,9 @@ public class SQLite implements DataStorage {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void saveUserData(Winstreak obj) {
+
+    }
 }
