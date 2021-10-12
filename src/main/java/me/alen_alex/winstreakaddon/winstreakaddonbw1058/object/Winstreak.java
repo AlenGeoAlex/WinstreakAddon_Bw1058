@@ -48,7 +48,7 @@ public class Winstreak {
 
     public void save(){
         Winstreak object = this;
-        Bukkit.getScheduler().runTaskAsynchronously(WinstreakAddonBw1058.getPlugin(), new Runnable() {
+        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, new Runnable() {
             @Override
             public void run() {
                 WinstreakAddonBw1058.getPlugin().getDataStorage().saveUserData(object);
