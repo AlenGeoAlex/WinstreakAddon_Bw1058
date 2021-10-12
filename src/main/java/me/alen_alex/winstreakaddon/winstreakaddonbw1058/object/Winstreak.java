@@ -29,18 +29,9 @@ public class Winstreak {
         return currentStreak;
     }
 
-    public void setCurrentStreak(int currentStreak) {
-        this.currentStreak = currentStreak;
-    }
-
     public int getBestStreak() {
         return bestStreak;
     }
-
-    public void setBestStreak(int bestStreak) {
-        this.bestStreak = bestStreak;
-    }
-
 
     public UUID getPlayerUUID() {
         return playerUUID;
