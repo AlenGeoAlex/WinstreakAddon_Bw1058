@@ -1,8 +1,8 @@
 package me.alen_alex.winstreakaddon.winstreakaddonbw1058.object;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.WinstreakAddonBw1058;
+import me.alen_alex.winstreakaddon.winstreakaddonbw1058.api.events.PlayerNewBestStreak;
 import org.bukkit.Bukkit;
 
-import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -12,6 +12,7 @@ public class Winstreak {
     private UUID playerUUID;
     private int currentStreak;
     private int bestStreak;
+    private WinstreakAddonBw1058 plugin;
 
     public Winstreak( UUID playerUUID) {
         this.playerUUID = playerUUID;
@@ -21,6 +22,7 @@ public class Winstreak {
         this.playerUUID = playerUUID;
         this.currentStreak = currentStreak;
         this.bestStreak = bestStreak;
+        this.plugin = WinstreakAddonBw1058.getPlugin();
     }
 
     public int getCurrentStreak() {
@@ -44,11 +46,7 @@ public class Winstreak {
         return playerUUID;
     }
 
-    public void addStreak(){
-
-    }
-
-    public void save(boolean destroy){
+    public void save(){
         Winstreak object = this;
         Bukkit.getScheduler().runTaskAsynchronously(WinstreakAddonBw1058.getPlugin(), new Runnable() {
             @Override
@@ -56,14 +54,33 @@ public class Winstreak {
                 WinstreakAddonBw1058.getPlugin().getDataStorage().saveUserData(object);
             }
         });
-        if(destroy) {
-            try {
-                finalize();
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        }
     }
+
+    public void processWin(){
+        final int newStreak = this.currentStreak + 1;
+        if(newStreak > bestStreak){
+            //TODO New bestStreak
+            PlayerNewBestStreak event = new PlayerNewBestStreak(this.playerUUID,this,newStreak);
+            plugin.getServer().getPluginManager().callEvent(event);
+        }
+        this.currentStreak = newStreak;
+        plugin.getDataStorage().addStreak(this.playerUUID);
+        //TODO Message for new streak
+    }
+
+    public void processFail(){
+        plugin.getDataStorage().resetStreak(this.playerUUID);
+        //TODO message while loosing streak
+    }
+
+    public boolean setCurrent(int value){
+        return plugin.getDataStorage().setCurrent(this.playerUUID, value);
+    }
+
+    public boolean setHighest(int value){
+        return plugin.getDataStorage().setHighest(this.playerUUID, value);
+    }
+
 
     @Override
     public boolean equals(Object o) {

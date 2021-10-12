@@ -19,7 +19,7 @@ public class PlayerLeaveEvent implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event){
         Player player = event.getPlayer();
         if(plugin.getStreakManager().contains(player)){
-            plugin.getStreakManager().get(player).save(true);
+            plugin.getStreakManager().get(player).save();
             plugin.getStreakManager().delete(player);
         }
 

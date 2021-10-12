@@ -58,7 +58,7 @@ public class WinstreakManager {
 
     public long saveAll(){
         long start = (System.currentTimeMillis());
-        streaks.forEach(((player, winstreak) -> {winstreak.save(false);}));
+        streaks.forEach(((player, winstreak) -> {winstreak.save();}));
         long end = (System.currentTimeMillis());
         return end-start;
     }

@@ -22,4 +22,10 @@ public interface DataStorage {
 
     void saveUserData(Winstreak obj);
 
+    void resetStreak(UUID uuid);
+
+    boolean setCurrent(UUID playerUUID,int currentStreak);
+
+    boolean setHighest(UUID playerUUID, int highestStreak);
+
 }

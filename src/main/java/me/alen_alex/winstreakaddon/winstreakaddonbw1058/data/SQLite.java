@@ -115,13 +115,27 @@ public class SQLite implements DataStorage {
 
     @Override
     public void addStreak(UUID playerUUID) {
-
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    PreparedStatement ps = getConnection().prepareStatement("UPDATE `addonws` SET `current` = `current` + 1 WHERE `uuid` = ?;");
+                    ps.setString(1, playerUUID.toString());
+                    ps.executeUpdate();
+                    ps.close();
+                    ps.getConnection().close();
+                } catch (SQLException e) {
+                    plugin.getLogger().severe("Unable to add Streak for player " + playerUUID + ". Check Stacktrace for more info!");
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private Connection getConnection(){
         try {
-            if(connection == null || connection.isClosed())
-                connection = DriverManager.getConnection(JDBC_URL);
+            if(this.connection == null || this.connection.isClosed())
+                this.connection = DriverManager.getConnection(JDBC_URL);
         }catch (SQLException e) {
             e.printStackTrace();
         }
@@ -141,6 +155,93 @@ public class SQLite implements DataStorage {
 
     @Override
     public void saveUserData(Winstreak obj) {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    PreparedStatement ps = getConnection().prepareStatement("UPDATE `addonws` SET `current` = ?,`highest` = ? WHERE `uuid` = ?");
+                    ps.setInt(1,obj.getCurrentStreak());
+                    ps.setInt(2,obj.getBestStreak());
+                    ps.setString(3,obj.getPlayerUUID().toString());
+                    ps.executeUpdate();
+                    ps.close();
+                    ps.getConnection().close();
+                }catch (SQLException e){
+                    plugin.getLogger().info("Unable to save player data for "+obj.getPlayerUUID());
+                    e.printStackTrace();
+                    return;
+                }
+            }
+        });
+    }
 
+    @Override
+    public void resetStreak(UUID uuid) {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    PreparedStatement ps = getConnection().prepareStatement("UPDATE `addonws` SET `current` = ? WHERE `uuid` =?;");
+                    ps.setInt(1,0);
+                    ps.setString(2,uuid.toString());
+                    ps.executeUpdate();
+                    ps.close();
+                    ps.getConnection().close();
+                }catch (SQLException e){
+                    plugin.getLogger().severe("Unable to reset streak for player "+uuid+". Check stacktrace for possible errors!");
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    @Override
+    public boolean setCurrent(UUID playerUUID, int currentStreak) {
+        final boolean[] completed = {false};
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    PreparedStatement ps = getConnection().prepareStatement("UPDATE `addonws` SET `current` = ? WHERE `uuid` = ?;");
+                    ps.setInt(1,currentStreak);
+                    ps.setString(2,playerUUID.toString());
+                    final int updateStatus = ps.executeUpdate();
+                    if(updateStatus >= 1)
+                        completed[0] = true;
+                    else completed[0] = false;
+                    ps.close();
+                    ps.getConnection().close();
+                }catch (SQLException e){
+                    e.printStackTrace();
+                    completed[0] = false;
+                }
+            }
+        });
+        return completed[0];
+    }
+
+    @Override
+    public boolean setHighest(UUID playerUUID, int highestStreak) {
+        final boolean[] completed = {false};
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    PreparedStatement ps = getConnection().prepareStatement("UPDATE `addonws` SET `highest` = ? WHERE `uuid` = ?;");
+                    ps.setInt(1,highestStreak);
+                    ps.setString(2,playerUUID.toString());
+                    final int updateStatus = ps.executeUpdate();
+                    if(updateStatus >= 1)
+                        completed[0] = true;
+                    else completed[0] = false;
+                    ps.close();
+                    ps.getConnection().close();
+                }catch (SQLException e){
+                    e.printStackTrace();
+                    completed[0] = false;
+                }
+            }
+        });
+        return completed[0];
     }
 }
