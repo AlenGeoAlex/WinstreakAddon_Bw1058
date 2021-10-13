@@ -9,7 +9,6 @@
 version:
 
 ##storageSystem
-
 storage:
   use-mysql: false
   host:
@@ -21,6 +20,12 @@ storage:
 settings:
   kick-when-failed-to-register-a-player: true
   kick-on-failed-message: "[Winstreak] &cUnable to register/load your user on/from database!"
+  broadcast-players-new-best-streak:
+    enabled: true
+    touchable-pay-respect: true
+    play-sound:
+      enabled: true
+      broadcast-sound: "NOTE_PLING"
   save-data:
     enabled: true
     interval-in-mins: 30

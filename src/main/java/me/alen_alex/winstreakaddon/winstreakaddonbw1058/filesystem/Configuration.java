@@ -4,29 +4,35 @@ import de.leonhard.storage.Config;
 import de.leonhard.storage.Yaml;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.WinstreakAddonBw1058;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.interfaces.YamlFiles;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.bukkit.Sound;
 
 public class Configuration implements YamlFiles {
 
     private WinstreakAddonBw1058 plugin;
     private Config pluginConfiguration;
+    private Messages messages;
     private String version;
     //
     private String sqlHost,sqlPort,sqlUsername,sqlPassword,sqlDatabase;
-    private boolean sql,doKickonFail,savePlayerData;
+    private boolean sql,doKickonFail,savePlayerData,broadcastPlayerNewStreak,broadcastTouchableRespect,playSoundOnBroadcast;
+    private Sound broadcastSound;
     private String kickMessage;
     private int saveDuration;
 
     public Configuration(WinstreakAddonBw1058 plugin) {
         this.plugin = plugin;
+        messages = new Messages(plugin);
         init();
     }
 
     @Override
     public void init() {
         pluginConfiguration = plugin.getFileUtils().createConfiguration();
-        version = pluginConfiguration.getOrSetDefault("version","1.0");
+        version = pluginConfiguration.getOrSetDefault("version",plugin.getDescription().getVersion());
         plugin.getLogger().info("Configuration has been intiated with version "+version);
+        messages.init();
     }
 
     @Override
@@ -45,6 +51,16 @@ public class Configuration implements YamlFiles {
         kickMessage = plugin.getMessageUtils().parseColor(pluginConfiguration.getString("settings.kick-on-failed-message"));
         savePlayerData = pluginConfiguration.getBoolean("settings.save-data.enabled");
         saveDuration = pluginConfiguration.getInt("settings.save-data.interval-in-mins");
+        broadcastPlayerNewStreak = pluginConfiguration.getBoolean("settings.broadcast-players-new-best-streak.enabled");
+        broadcastTouchableRespect = pluginConfiguration.getBoolean("settings.broadcast-players-new-best-streak.touchable-pay-respect");
+        playSoundOnBroadcast = pluginConfiguration.getBoolean("settings.broadcast-players-new-best-streak.play-sound.enabled");
+        if(EnumUtils.isValidEnum(Sound.class,pluginConfiguration.getString("settings.broadcast-players-new-best-streak.play-sound.broadcast-sound")))
+            broadcastSound = Sound.valueOf(pluginConfiguration.getString("settings.broadcast-players-new-best-streak.play-sound.broadcast-sound"));
+        else {
+            plugin.getLogger().warning("The broadcast sound supplied does not match for the server version! Using default sound NOTE_PLING");
+            broadcastSound = Sound.NOTE_PLING;
+        }
+
     }
 
     @Override
@@ -101,5 +117,25 @@ public class Configuration implements YamlFiles {
 
     public int getSaveDuration() {
         return saveDuration;
+    }
+
+    public Messages getMessages() {
+        return messages;
+    }
+
+    public boolean doBroadcastPlayerNewStreak() {
+        return broadcastPlayerNewStreak;
+    }
+
+    public boolean isBroadcastTouchableRespect() {
+        return broadcastTouchableRespect;
+    }
+
+    public boolean isPlaySoundOnBroadcast() {
+        return playSoundOnBroadcast;
+    }
+
+    public Sound getBroadcastSound() {
+        return broadcastSound;
     }
 }

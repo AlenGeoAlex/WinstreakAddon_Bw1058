@@ -2,13 +2,12 @@ package me.alen_alex.winstreakaddon.winstreakaddonbw1058.object;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.WinstreakAddonBw1058;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.api.events.PlayerNewBestStreak;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.Objects;
 import java.util.UUID;
 
 public class Winstreak {
-
-
     private UUID playerUUID;
     private int currentStreak;
     private int bestStreak;
@@ -48,20 +47,38 @@ public class Winstreak {
     }
 
     public void processWin(){
-        final int newStreak = this.currentStreak + 1;
+        final int newStreak = this.currentStreak++;
         if(newStreak > bestStreak){
-            //TODO New bestStreak
             PlayerNewBestStreak event = new PlayerNewBestStreak(this.playerUUID,this,newStreak);
             plugin.getServer().getPluginManager().callEvent(event);
+            if(Bukkit.getPlayer(playerUUID) != null) {
+                Player player = Bukkit.getPlayer(playerUUID);
+                if(plugin.getPluginConfig().doBroadcastPlayerNewStreak()){
+                    if(plugin.getPluginConfig().isBroadcastTouchableRespect()){
+                        //TODO Broadcast Touchable message to player
+                    }else{
+                            plugin.getMessageUtils().broadcastMessageNoPrefix(plugin.getPluginConfig().getMessages().getNormalBroadcastMessage(player.getName(),newStreak));
+                        }
+
+                    if(plugin.getPluginConfig().isPlaySoundOnBroadcast()){
+                        //TODO
+                    }
+                }
+            }
         }
         this.currentStreak = newStreak;
         plugin.getDataStorage().addStreak(this.playerUUID);
-        //TODO Message for new streak
+        if(Bukkit.getPlayer(playerUUID) != null){
+            Player player = Bukkit.getPlayer(playerUUID);
+            plugin.getMessageUtils().sendMessage(player, plugin.getPluginConfig().getMessages().getPlayerNewStreak(player.getName(),currentStreak),false);
+        }
     }
 
     public void processFail(){
         plugin.getDataStorage().resetStreak(this.playerUUID);
-        //TODO message while loosing streak
+        if(Bukkit.getPlayer(playerUUID) != null){
+            plugin.getMessageUtils().sendMessage(Bukkit.getPlayer(playerUUID), plugin.getPluginConfig().getMessages().getStreakBackToZero(),false);
+        }
     }
 
     public boolean setCurrent(int value){

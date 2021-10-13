@@ -23,16 +23,31 @@ public class WinstreakManager {
         playerManager = new PlayerManager(plugin);
     }
 
+    /**
+     * Checks were a uuid is cached in the streak HashMap
+     * @param playerUUID of the player
+     * @return true if contains, else false
+     */
     public boolean contains(UUID playerUUID){
         if(Bukkit.getPlayer(playerUUID) != null){
             return streaks.containsKey(Bukkit.getPlayer(playerUUID));
         }return false;
     }
 
+    /**
+     * Add a player to the cache HashMap
+     * @param player to add to the cache
+     * @param streak the Winstreak Object of the player
+     */
     public void insert(Player player, Winstreak streak){
         streaks.put(player,streak);
     }
 
+    /**
+     * Add a player to the cache HashMap
+     * @param playerUUID to add to the cache
+     * @param winstreak the Winstreak Object of the player
+     */
     public void insert(UUID playerUUID,Winstreak winstreak){
         if(Bukkit.getPlayer(playerUUID) != null)
             insert(Bukkit.getPlayer(playerUUID),winstreak);
@@ -56,6 +71,10 @@ public class WinstreakManager {
             streaks.get(Bukkit.getPlayer(playerUUID));
     }
 
+    /**
+     * Save all current cached players of streaks HashMap to database
+     * @return Time elapsed to save all players to database
+     */
     public long saveAll(){
         long start = (System.currentTimeMillis());
         streaks.forEach(((player, winstreak) -> {winstreak.save();}));

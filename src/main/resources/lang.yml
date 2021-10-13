@@ -1,0 +1,8 @@
+new-streak: "&6Congrats! &b&l&%player_name% &fon your new streak of %newstreak%!!"
+lose-streak: "&cYou have lost all your streak!"
+broadcast-streak:
+  normal-broadcast: "&b&l&%player_name% &fhas achieved a new streak of &6%newstreak% &fon the network!!"
+  advanced:
+    broadcast: "&b&l&%player_name% &fhas achieved a new streak of &6%newstreak% &fon the network!!"
+    respect-paid: "&6%player_name% &6&lhas payed you his respect!"
+    hover-message: "&bClick to pay respect to the player!"

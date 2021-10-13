@@ -41,7 +41,7 @@ public class PlayerJoinEvents implements Listener {
         }
     },20L);
 
-    if(player.hasPermission(PermissionData.NOTIFICATION_PERMISSION.permission)){
+    if(player.hasPermission(PermissionData.NOTIFICATION_PERMISSION.getPermission())){
         if(!plugin.getStreakManager().getPlayerManager().getNotificationPermission().contains(player))
             plugin.getStreakManager().getPlayerManager().getNotificationPermission().add(player);
         if(plugin.isForcedSQLite())

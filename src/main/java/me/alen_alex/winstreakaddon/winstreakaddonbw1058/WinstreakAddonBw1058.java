@@ -1,10 +1,13 @@
 package me.alen_alex.winstreakaddon.winstreakaddonbw1058;
 
+import co.aikar.commands.BukkitCommandManager;
 import com.andrei1058.bedwars.api.BedWars;
+import me.alen_alex.winstreakaddon.winstreakaddonbw1058.command.WSAdmin;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.data.SQL;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.data.SQLite;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.filesystem.Configuration;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.interfaces.DataStorage;
+import me.alen_alex.winstreakaddon.winstreakaddonbw1058.listener.BedwarsListener;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.listener.PlayerJoinEvents;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.listener.PlayerLeaveEvent;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.manager.WinstreakManager;
@@ -24,7 +27,8 @@ public final class WinstreakAddonBw1058 extends JavaPlugin {
     private MessageUtils messageUtils;
     private WinstreakManager streakManager;
     private SaveDataTask playerSaving;
-    private boolean forcedSQLite = false;
+    private BukkitCommandManager commandManager;
+    private boolean forcedSQLite = false,bedwarsEnabled = false;
     @Override
     public void onEnable() {
         plugin = this;
@@ -67,7 +71,7 @@ public final class WinstreakAddonBw1058 extends JavaPlugin {
             getLogger().severe("-----------------------------------------------");
             getServer().getPluginManager().disablePlugin(plugin);
             return;
-        }
+        }else bedwarsEnabled = true;
         /*
         Intializing the plugins basic Utils and Configuration Classes
          */
@@ -121,6 +125,8 @@ public final class WinstreakAddonBw1058 extends JavaPlugin {
         if(pluginConfig.isSavePlayerData())
             playerSaving.runTaskTimerAsynchronously(this, 20L, getPluginConfig().getSaveDuration() *20*60);
         registerListeners();
+        commandManager = new BukkitCommandManager(this);
+        commandManager.registerCommand(new WSAdmin(this));
         this.getLogger().info("Win-streak addon has been properly enabled!!");
         this.getLogger().info("https://github.com/AlenGeoAlex/WinstreakAddon_Bw1058");
     }
@@ -147,6 +153,8 @@ public final class WinstreakAddonBw1058 extends JavaPlugin {
     private void registerListeners(){
         this.getServer().getPluginManager().registerEvents(new PlayerJoinEvents(this), this);
         this.getServer().getPluginManager().registerEvents(new PlayerLeaveEvent(this),this);
+        if(bedwarsEnabled)
+            this.getServer().getPluginManager().registerEvents(new BedwarsListener(this), this);
     }
 
 
@@ -180,5 +188,9 @@ public final class WinstreakAddonBw1058 extends JavaPlugin {
 
     public boolean isForcedSQLite() {
         return forcedSQLite;
+    }
+
+    public boolean isBedwarsEnabled() {
+        return bedwarsEnabled;
     }
 }
