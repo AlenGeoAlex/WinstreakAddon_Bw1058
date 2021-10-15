@@ -1,6 +1,7 @@
 package me.alen_alex.winstreakaddon.winstreakaddonbw1058.object;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.WinstreakAddonBw1058;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.api.events.PlayerNewBestStreak;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -55,14 +56,32 @@ public class Winstreak {
                 Player player = Bukkit.getPlayer(playerUUID);
                 if(plugin.getPluginConfig().doBroadcastPlayerNewStreak()){
                     if(plugin.getPluginConfig().isBroadcastTouchableRespect()){
-                        //TODO Broadcast Touchable message to player
+                        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+                            @Override
+                            public void run() {
+                                TextComponent component = plugin.getPluginConfig().getMessages().getClickableBroadcast(newStreak,player);
+                                Bukkit.getOnlinePlayers().forEach((serverPlayer) -> {
+                                    serverPlayer.spigot().sendMessage(component);
+                                    if(plugin.getPluginConfig().isPlaySoundOnBroadcast())
+                                        serverPlayer.playSound(serverPlayer.getLocation(),plugin.getPluginConfig().getBroadcastSound(),1.0F,1.0F);
+                                });
+                            }
+                        });
                     }else{
-                            plugin.getMessageUtils().broadcastMessageNoPrefix(plugin.getPluginConfig().getMessages().getNormalBroadcastMessage(player.getName(),newStreak));
+                            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (plugin.getPluginConfig().isPlaySoundOnBroadcast()) {
+                                        Bukkit.getOnlinePlayers().forEach((serverPlayer1) -> {
+                                            serverPlayer1.sendMessage(plugin.getPluginConfig().getMessages().getNormalBroadcastMessage(player.getName(), newStreak));
+                                            serverPlayer1.playSound(serverPlayer1.getLocation(),plugin.getPluginConfig().getBroadcastSound(),1.0F,1.0F);
+                                        });
+                                    }else {
+                                        plugin.getMessageUtils().broadcastMessageNoPrefix(plugin.getPluginConfig().getMessages().getNormalBroadcastMessage(player.getName(),newStreak));
+                                    }
+                                }
+                            });
                         }
-
-                    if(plugin.getPluginConfig().isPlaySoundOnBroadcast()){
-                        //TODO
-                    }
                 }
             }
         }

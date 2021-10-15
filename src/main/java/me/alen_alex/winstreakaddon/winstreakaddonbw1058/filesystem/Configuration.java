@@ -60,7 +60,6 @@ public class Configuration implements YamlFiles {
             plugin.getLogger().warning("The broadcast sound supplied does not match for the server version! Using default sound NOTE_PLING");
             broadcastSound = Sound.NOTE_PLING;
         }
-
     }
 
     @Override

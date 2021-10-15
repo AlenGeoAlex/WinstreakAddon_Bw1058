@@ -3,6 +3,11 @@ package me.alen_alex.winstreakaddon.winstreakaddonbw1058.filesystem;
 import de.leonhard.storage.Yaml;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.WinstreakAddonBw1058;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.interfaces.YamlFiles;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.entity.Player;
 
 public class Messages implements YamlFiles {
 
@@ -73,5 +78,13 @@ public class Messages implements YamlFiles {
 
     public String getStreakBackToZero() {
         return streakBackToZero;
+    }
+
+    public TextComponent getClickableBroadcast( int newStreak, Player player){
+        TextComponent textComponent = new TextComponent();
+        textComponent.setText(getAdvancedBroadcastMessage(player.getName(),newStreak));
+        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,(new ComponentBuilder(getAdvancedBroadcastHoverMessage()).create())));
+        textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"wsaddon payrespect "+player.getUniqueId()));
+        return textComponent;
     }
 }

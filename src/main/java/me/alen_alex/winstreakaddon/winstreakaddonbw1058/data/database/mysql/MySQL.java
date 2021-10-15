@@ -2,7 +2,7 @@ package me.alen_alex.winstreakaddon.winstreakaddonbw1058.data.database.mysql;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import me.alen_alex.egghunt.database.Database;
+import me.alen_alex.winstreakaddon.winstreakaddonbw1058.data.database.Database;
 
 import java.sql.Connection;
 import java.sql.SQLException;
