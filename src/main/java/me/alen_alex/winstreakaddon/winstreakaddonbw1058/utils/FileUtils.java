@@ -15,13 +15,18 @@ import java.io.InputStream;
 public class FileUtils {
 
     private WinstreakAddonBw1058 plugin;
+    private final String parentFolder;
+    private final File parentFolderFile;
 
     public FileUtils(WinstreakAddonBw1058 plugin) {
         this.plugin = plugin;
+        parentFolder = plugin.getDataFolder().getParent()+File.separator+"BedWars1058"+File.separator+"Addons"+File.separator+"Winstreak";
+        System.out.println(parentFolder);
+        parentFolderFile = new File(parentFolder);
     }
 
     public void generateParentFolder(){
-        if(plugin.getDataFolder().exists())
+        if(parentFolderFile.exists())
             return;
         plugin.getDataFolder().mkdirs();
         plugin.getLogger().info("Successfully created plugin folder");
@@ -31,7 +36,7 @@ public class FileUtils {
 
     public Config createConfiguration(){
         generateParentFolder();
-        File configFile = new File(plugin.getDataFolder(), "config.yml");
+        File configFile = new File(parentFolder, "config.yml");
         Config createConfig = LightningBuilder
                 .fromFile(configFile)
                 .addInputStream(plugin.getResource("config.yml"))
@@ -39,7 +44,7 @@ public class FileUtils {
                 .setConfigSettings(ConfigSettings.PRESERVE_COMMENTS)
                 .setReloadSettings(ReloadSettings.MANUALLY)
                 .createConfig();
-        Config config = new Config("config.yml","plugins"+File.separator+plugin.getDescription().getName());
+        Config config = new Config("config.yml",parentFolder);
         config.set("version",plugin.getDescription().getVersion());
         plugin.getLogger().info("Configuration has been generated/found");
         plugin.getLogger().info("Configuration version - "+config.get("version"));
@@ -47,7 +52,7 @@ public class FileUtils {
     }
 
     public boolean generateFolder(String folderName){
-        File file = new File(plugin.getDataFolder()+File.separator+folderName);
+        File file = new File(parentFolder+File.separator+folderName);
         if(file.exists())
             return false;
         else{
@@ -58,41 +63,41 @@ public class FileUtils {
     }
 
     public Yaml createFile(InputStream is, String fileName){
-        return new Yaml(fileName,plugin.getDataFolder().getPath(),is);
+        return new Yaml(fileName,parentFolder,is);
     }
 
     public Yaml createFile(String fileName){
-        return new Yaml(fileName,plugin.getDataFolder().getPath());
+        return new Yaml(fileName,parentFolder);
     }
 
     public Yaml createFile(InputStream is,String fileName,String folderName){
         if(!generateFolder(folderName))
             plugin.getLogger().info("The folder "+folderName+" already exist..Continuing creation of the file "+fileName);
-        return new Yaml(fileName,plugin.getDataFolder()+File.separator+folderName,is);
+        return new Yaml(fileName,parentFolder+File.separator+folderName,is);
     }
 
     public Yaml createFile(String fileName,String folderName){
         if(!generateFolder(folderName))
             plugin.getLogger().info("The folder"+folderName+" already exist..Continuing creation of the file "+fileName);
-        return new Yaml(fileName,plugin.getDataFolder()+File.separator+folderName);
+        return new Yaml(fileName,parentFolder+File.separator+folderName);
     }
 
     public Json createJSONFile(String fileName, String folderName){
         if(!generateFolder(folderName))
             plugin.getLogger().info("The folder"+folderName+" already exist..Continuing creation of the file "+fileName);
-        return new Json(fileName,plugin.getDataFolder()+File.separator+folderName);
+        return new Json(fileName,parentFolder+File.separator+folderName);
 
     }
 
     public Json createJSONFile(InputStream is, String fileName, String folderName){
         if(!generateFolder(folderName))
             plugin.getLogger().info("The folder"+folderName+" already exist..Continuing creation of the file "+fileName);
-        return new Json(fileName,plugin.getDataFolder()+File.separator+folderName,is);
+        return new Json(fileName,parentFolder+File.separator+folderName,is);
 
     }
 
     public boolean deleteFile(String fileName){
-        File file = new File(plugin.getDataFolder(),fileName);
+        File file = new File(parentFolder,fileName);
         if(file.exists()){
             file.delete();
             return true;
@@ -103,7 +108,7 @@ public class FileUtils {
     }
 
     public boolean deleteFile(String fileName,String folderName){
-        File file = new File(plugin.getDataFolder()+File.separator+folderName,fileName);
+        File file = new File(parentFolder+File.separator+folderName,fileName);
         if(file.exists()){
             file.delete();
             return true;

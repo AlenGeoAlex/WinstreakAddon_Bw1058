@@ -27,6 +27,7 @@ public class Messages implements YamlFiles {
         if(messageConfig != null){
             loadFile();
             version = messageConfig.getOrSetDefault("version",plugin.getDescription().getVersion());
+            messageConfig = null;
         }else plugin.getLogger().severe("Unable to load messages. Possible reason failed to create/read lang.yml");
     }
 
@@ -38,7 +39,6 @@ public class Messages implements YamlFiles {
         advancedBroadcastMessage = plugin.getMessageUtils().parseColor(messageConfig.getString("broadcast-streak.advanced.broadcast"));
         advancedBroadcastHoverMessage = plugin.getMessageUtils().parseColor(messageConfig.getString("broadcast-streak.advanced.hover-message"));
         advancedBroadcastReply = plugin.getMessageUtils().parseColor(messageConfig.getString("broadcast-streak.advanced.respect-paid"));
-        messageConfig = null;
     }
 
     @Override

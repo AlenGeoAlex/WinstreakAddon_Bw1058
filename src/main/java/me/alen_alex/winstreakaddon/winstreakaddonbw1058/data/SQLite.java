@@ -4,6 +4,7 @@ import me.alen_alex.winstreakaddon.winstreakaddonbw1058.WinstreakAddonBw1058;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.interfaces.DataStorage;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.object.Winstreak;
 
+import java.io.File;
 import java.sql.*;
 import java.util.UUID;
 
@@ -15,13 +16,14 @@ public class SQLite implements DataStorage {
 
     public SQLite(WinstreakAddonBw1058 plugin) {
         this.plugin = plugin;
-        this.JDBC_URL = "jdbc:sqlite:" + plugin.getDataFolder() + "/database/auctionsData.db";
+        this.JDBC_URL = "jdbc:sqlite:" + plugin.getDataFolder().getParent()+ File.separator+"BedWars1058"+File.separator+"Addons"+File.separator+"Winstreak" + "/database/winstreakData.db";
     }
 
     @Override
     public boolean init() {
         try {
             Class.forName("org.sqlite.JDBC");
+            plugin.getFileUtils().generateFolder("database");
             connection = DriverManager.getConnection(JDBC_URL);
             if (!connection.isClosed()) {
                 if (initTables()) {
@@ -43,8 +45,8 @@ public class SQLite implements DataStorage {
     @Override
     public boolean initTables() {
         try {
-            PreparedStatement ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS `addonws` (`id` int NOT NULL AUTO_INCREMENT PRIMARY KEY, `name` VARCHAR(30) NOT NULL, `uuid` VARCHAR(50) NOT NULL, `current` INT(3) NOT NULL, `highest` INT(3) NOT NULL );");
-            ps.executeUpdate();
+            PreparedStatement ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS `addonws` (`id` INTEGER PRIMARY KEY, `name` VARCHAR(30) NOT NULL, `uuid` VARCHAR(50) NOT NULL, `current` INT(3) NOT NULL, `highest` INT(3) NOT NULL );");
+            System.out.println(ps.executeUpdate());
             ps.close();
             connection.close();
             return true;

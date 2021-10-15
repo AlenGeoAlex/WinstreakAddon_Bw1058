@@ -17,6 +17,7 @@ public class BedwarsListener implements Listener {
 
     public BedwarsListener(WinstreakAddonBw1058 plugin) {
         this.plugin = plugin;
+        plugin.getLogger().info("Registered Event: BedwarsListener");
     }
 
     @EventHandler

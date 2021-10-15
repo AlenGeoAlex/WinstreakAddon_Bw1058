@@ -2,7 +2,8 @@ package me.alen_alex.winstreakaddon.winstreakaddonbw1058;
 
 import co.aikar.commands.BukkitCommandManager;
 import com.andrei1058.bedwars.api.BedWars;
-import me.alen_alex.winstreakaddon.winstreakaddonbw1058.command.WSAdmin;
+import me.alen_alex.winstreakaddon.winstreakaddonbw1058.command.Command;
+import me.alen_alex.winstreakaddon.winstreakaddonbw1058.command.subcommand.SetCurrentCommand;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.data.SQL;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.data.SQLite;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.filesystem.Configuration;
@@ -14,6 +15,7 @@ import me.alen_alex.winstreakaddon.winstreakaddonbw1058.manager.WinstreakManager
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.task.SaveDataTask;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.utils.FileUtils;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.utils.MessageUtils;
+import me.alen_alex.winstreakaddon.winstreakaddonbw1058.utils.PermissionData;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -125,8 +127,9 @@ public final class WinstreakAddonBw1058 extends JavaPlugin {
         if(pluginConfig.isSavePlayerData())
             playerSaving.runTaskTimerAsynchronously(this, 20L, getPluginConfig().getSaveDuration() *20*60);
         registerListeners();
-        commandManager = new BukkitCommandManager(this);
-        commandManager.registerCommand(new WSAdmin(this));
+        registerCommands();
+        /*commandManager = new BukkitCommandManager(this);
+        commandManager.registerCommand(new WSAdmin(this));*/
         this.getLogger().info("Win-streak addon has been properly enabled!!");
         this.getLogger().info("https://github.com/AlenGeoAlex/WinstreakAddon_Bw1058");
     }
@@ -155,6 +158,12 @@ public final class WinstreakAddonBw1058 extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new PlayerLeaveEvent(this),this);
         if(bedwarsEnabled)
             this.getServer().getPluginManager().registerEvents(new BedwarsListener(this), this);
+    }
+
+    public void registerCommands(){
+        Command adminCommand = new Command(this,"wsadmin", PermissionData.ADMIN_PERMISSION.getPermission());
+        adminCommand.register();
+        adminCommand.registerSubCommand("setcurrent",new SetCurrentCommand());
     }
 
 
