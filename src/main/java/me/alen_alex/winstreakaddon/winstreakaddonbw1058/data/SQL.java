@@ -48,7 +48,7 @@ public class SQL implements DataStorage {
     public boolean initTables() {
         try {
             PreparedStatement ps = getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS `addonws` (`id` int NOT NULL AUTO_INCREMENT PRIMARY KEY, `uuid` VARCHAR(50) NOT NULL, `current` INT(3) NOT NULL, `highest` INT(3) NOT NULL );");
-            ps.executeUpdate();
+            ps.execute();
             ps.close();
             return true;
         } catch (SQLException e) {
@@ -84,7 +84,7 @@ public class SQL implements DataStorage {
             ps.setString(1,playerUUID.toString());
             ps.setInt(2,0);
             ps.setInt(3,0);
-            ps.executeUpdate();
+            ps.execute();
             ps.close();
             return true;
         }catch (SQLException e) {

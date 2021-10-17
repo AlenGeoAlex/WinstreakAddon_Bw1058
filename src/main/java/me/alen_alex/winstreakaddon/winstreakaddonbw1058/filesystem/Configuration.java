@@ -44,7 +44,8 @@ public class Configuration implements YamlFiles {
         sqlPort = pluginConfiguration.getString("storage.port");
         sqlDatabase = pluginConfiguration.getString("storage.database");
         if(StringUtils.isBlank(sqlHost) || StringUtils.isBlank(sqlDatabase) || StringUtils.isBlank(sqlUsername) || StringUtils.isBlank(sqlPort)){
-            plugin.getLogger().warning("Configuration related to SQL are missing, Falling back to SQLite!");
+            if(sql)
+                plugin.getLogger().warning("Configuration related to SQL are missing, Falling back to SQLite!");
             sql = false;
         }
         doKickonFail = pluginConfiguration.getBoolean("settings.kick-when-failed-to-register-a-player");

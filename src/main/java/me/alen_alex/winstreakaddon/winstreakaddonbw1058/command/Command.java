@@ -49,7 +49,7 @@ public class Command extends org.bukkit.command.Command implements CommandExecut
         subCommand.getAliases().forEach((a) -> {
             aliases.put(a,commandName);
         });
-        plugin.getLogger().info("Registered Subcommand for "+commandName+": "+subCommand.getCommandName());
+        plugin.getLogger().info("Registered Subcommand for "+this.commandName+": "+subCommand.getCommandName());
     }
 
 

@@ -23,25 +23,30 @@ public class PlayerJoinEvents implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event){
         Player player = event.getPlayer();
-    plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
-        @Override
-        public void run() {
-            Winstreak playerStreak = plugin.getDataStorage().fetchUser(player.getUniqueId());
-            if(playerStreak == null){
-                plugin.getLogger().warning("Unable to load player data for user "+player.getName());
-                if(plugin.getPluginConfig().isDoKickonFail())
-                    player.kickPlayer(plugin.getPluginConfig().getKickMessage());
-                return;
-            }
-            if(plugin.getStreakManager().contains(player)) {
-                plugin.getLogger().warning("There seems to already have a data loaded for the user " + player.getName() + ". Overwriting it!");
-                plugin.getStreakManager().delete(player);
-            }
-            plugin.getStreakManager().insert(player,playerStreak);
+        if(plugin.getStreakManager().contains(player)){
+            plugin.getStreakManager().get(player).setLeft(false);
+            return;
+        }else {
+            plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
+                @Override
+                public void run() {
+                    Winstreak playerStreak = plugin.getDataStorage().fetchUser(player.getUniqueId());
+                    if (playerStreak == null) {
+                        plugin.getLogger().warning("Unable to load player data for user " + player.getName());
+                        if (plugin.getPluginConfig().isDoKickonFail())
+                            player.kickPlayer(plugin.getPluginConfig().getKickMessage());
+                        return;
+                    }
+                    if (plugin.getStreakManager().contains(player)) {
+                        plugin.getLogger().warning("There seems to already have a data loaded for the user " + player.getName() + ". Overwriting it!");
+                        plugin.getStreakManager().delete(player);
+                    }
+                    plugin.getStreakManager().insert(player, playerStreak);
+                }
+            }, 20L);
         }
-    },20L);
 
-    if(player.hasPermission(PermissionData.NOTIFICATION_PERMISSION.getPermission())){
+    if(player.hasPermission(PermissionData.NOTIFICATION_PERMISSION.permission)){
         if(!plugin.getStreakManager().getPlayerManager().getNotificationPermission().contains(player))
             plugin.getStreakManager().getPlayerManager().getNotificationPermission().add(player);
         if(plugin.isForcedSQLite())

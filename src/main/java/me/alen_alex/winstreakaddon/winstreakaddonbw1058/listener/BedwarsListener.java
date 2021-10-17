@@ -1,10 +1,11 @@
 package me.alen_alex.winstreakaddon.winstreakaddonbw1058.listener;
 
+import com.andrei1058.bedwars.api.arena.GameState;
+import com.andrei1058.bedwars.api.arena.IArena;
 import com.andrei1058.bedwars.api.events.gameplay.GameEndEvent;
+import com.andrei1058.bedwars.api.events.gameplay.GameStateChangeEvent;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.WinstreakAddonBw1058;
 import me.alen_alex.winstreakaddon.winstreakaddonbw1058.object.Winstreak;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -30,16 +31,39 @@ public class BedwarsListener implements Listener {
             public void run() {
                 winners.forEach(winnerUUID -> {
                     if (plugin.getStreakManager().contains(winnerUUID) && plugin.getServer().getPlayer(winnerUUID) != null) {
-                        plugin.getStreakManager().get(plugin.getServer().getPlayer(winnerUUID)).processWin();
+                        final Winstreak player = plugin.getStreakManager().get(plugin.getServer().getPlayer(winnerUUID));
+                        player.processWin();
+                        player.setOnGame(false);
+                        if(player.hasLeft()){
+                            //TODO Complete it
+                        }
                     } else plugin.getDataStorage().addStreak(winnerUUID);
                 });
                 losers.forEach((loserUUID) -> {
                     if(plugin.getStreakManager().contains(loserUUID) && plugin.getServer().getPlayer(loserUUID) != null){
-                        plugin.getStreakManager().get(plugin.getServer().getPlayer(loserUUID)).processFail();
+                        final Winstreak player = plugin.getStreakManager().get(plugin.getServer().getPlayer(loserUUID));
+                       player.processFail();
+                       player.setOnGame(false);
+                       if(player.hasLeft()){
+                           //TODO Complete it
+                        }
                     }else plugin.getDataStorage().resetStreak(loserUUID);
                 });
             }
         });
+    }
+
+    @EventHandler
+    public void onGameStateChangeEvent(GameStateChangeEvent event){
+        if(event.getNewState() == GameState.playing ){
+            final IArena gameArena = event.getArena();
+            gameArena.getPlayers().forEach((player -> {
+                if(plugin.getStreakManager().contains(player)){
+                    plugin.getStreakManager().get(player).setOnGame(true);
+                }
+            }));
+        }
+
     }
 
 }

@@ -12,6 +12,8 @@ public class Winstreak {
     private UUID playerUUID;
     private int currentStreak;
     private int bestStreak;
+    private boolean onGame;
+    private boolean left;
     private WinstreakAddonBw1058 plugin;
 
     public Winstreak( UUID playerUUID) {
@@ -22,6 +24,8 @@ public class Winstreak {
         this.playerUUID = playerUUID;
         this.currentStreak = currentStreak;
         this.bestStreak = bestStreak;
+        this.onGame = false;
+        this.left = false;
         this.plugin = WinstreakAddonBw1058.getPlugin();
     }
 
@@ -45,6 +49,22 @@ public class Winstreak {
                 WinstreakAddonBw1058.getPlugin().getDataStorage().saveUserData(object);
             }
         });
+    }
+
+    public boolean isOnGame() {
+        return onGame;
+    }
+
+    public void setOnGame(boolean onGame) {
+        this.onGame = onGame;
+    }
+
+    public boolean hasLeft() {
+        return left;
+    }
+
+    public void setLeft(boolean left) {
+        this.left = left;
     }
 
     public void processWin(){
